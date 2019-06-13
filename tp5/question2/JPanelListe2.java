@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.EmptyStackException;
 
 public class JPanelListe2 extends JPanel implements ActionListener, ItemListener {
 
@@ -33,11 +34,15 @@ public class JPanelListe2 extends JPanel implements ActionListener, ItemListener
 
     private List<String> liste;
     private Map<String, Integer> occurrences;
+    
+    private CareTaker careTaker;
 
     public JPanelListe2(List<String> liste, Map<String, Integer> occurrences) {
         this.liste = liste;
         this.occurrences = occurrences;
-
+        
+        careTaker = new CareTaker();
+        
         cmd.setLayout(new GridLayout(3, 1));
 
         cmd.add(afficheur);
@@ -67,7 +72,11 @@ public class JPanelListe2 extends JPanel implements ActionListener, ItemListener
         add(texte, "Center");
 
         boutonRechercher.addActionListener(this);
-        // à compléter;
+        boutonRetirer.addActionListener(this);
+        boutonOccurrences.addActionListener(this);
+        boutonAnnuler.addActionListener(this);
+        ordreCroissant.addItemListener(this);
+        ordreDecroissant.addItemListener(this);
 
     }
 
@@ -91,6 +100,12 @@ public class JPanelListe2 extends JPanel implements ActionListener, ItemListener
                     afficheur.setText(" -->  " + occur + " occurrence(s)");
                 else
                     afficheur.setText(" -->  ??? ");
+            } else if (ae.getSource() == boutonAnnuler){
+                try{
+                    liste = careTaker.get().getListe();
+                } catch (EmptyStackException ese){
+                    afficheur.setText("Rien a annuler!");
+                }
             }
             texte.setText(liste.toString());
 
@@ -100,20 +115,35 @@ public class JPanelListe2 extends JPanel implements ActionListener, ItemListener
     }
 
     public void itemStateChanged(ItemEvent ie) {
-        if (ie.getSource() == ordreCroissant)
-        ;// à compléter
-        else if (ie.getSource() == ordreDecroissant)
-        ;// à compléter
-
+        updateMementoState();
+        if (ie.getSource() == ordreCroissant){
+            Collections.sort(liste);
+        }
+            
+        else if (ie.getSource() == ordreDecroissant){
+            Collections.sort(liste, Collections.reverseOrder());
+        }
         texte.setText(liste.toString());
     }
 
     private boolean retirerDeLaListeTousLesElementsCommencantPar(String prefixe) {
+        updateMementoState();
         boolean resultat = false;
-        // à compléter
-        // à compléter
-        // à compléter
-        return resultat;
+        Iterator<String> iterator = liste.iterator();
+        String currentElement;
+        while(iterator.hasNext()){
+            currentElement = iterator.next();
+            if(currentElement != null && currentElement.startsWith(prefixe)){
+                resultat = true;
+                occurrences.replace(currentElement, 0);
+                iterator.remove();
+            }
+        }
+        return resultat; 
+    }
+    
+    public void updateMementoState(){
+        careTaker.add(new Memento(new LinkedList(liste)));
     }
 
 }

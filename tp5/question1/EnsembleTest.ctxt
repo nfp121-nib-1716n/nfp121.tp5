@@ -2,4 +2,10 @@
 comment0.target=EnsembleTest
 comment1.params=
 comment1.target=void\ testUnion()
-numComments=2
+comment2.params=
+comment2.target=void\ testIntersection()
+comment3.params=
+comment3.target=void\ testDifference()
+comment4.params=
+comment4.target=void\ testDiffSymetrique()
+numComments=5

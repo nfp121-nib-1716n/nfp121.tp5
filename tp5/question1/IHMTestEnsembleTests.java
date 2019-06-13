@@ -25,7 +25,7 @@ public class IHMTestEnsembleTests extends junit.framework.TestCase{
         f.setAlwaysOnTop(true);
         f.setLocation(random.nextInt(500), random.nextInt(500));
         robot = new Robot();
-        robot.delay(60);
+        robot.delay(120);
     }
 
     protected void tearDown(){ // throws java.lang.Exception
